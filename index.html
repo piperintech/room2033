@@ -129,7 +129,7 @@ button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .rec form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .rec label{color:var(--inverse-muted)}
 .rec input,.rec textarea{background:transparent;border:1px solid color-mix(in srgb,var(--on-inverse) 22%,transparent);color:var(--on-inverse)}
-.rec textarea{min-height:84px;resize:vertical;font-family:inherit}
+.rec textarea{min-height:140px;resize:vertical;font-family:inherit}
 .rec .full{grid-column:1/-1}
 .rec .btn.primary{background:var(--on-inverse);color:var(--surface-inverse);justify-self:start}
 .rec .status{font-size:13px;color:var(--inverse-muted);align-self:center}
@@ -379,13 +379,10 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
         <div class="sig2">Thank you, Manu</div>
       </div>
       <form id="recForm2" hidden>
-        <label for="rcName">Your name<input id="rcName" required autocomplete="name"></label>
-        <label for="rcWho">Who you are to me<input id="rcWho" placeholder="Dad, brother, friend"></label>
-        <label for="rcTitle">Song or album<input id="rcTitle" required></label>
-        <label for="rcArtist">Artist<input id="rcArtist" required></label>
-        <label class="full" for="rcWhy">Why I should listen<textarea id="rcWhy" placeholder="When you first heard it, what to listen for, the best song on it"></textarea></label>
+        <label class="full" for="rcWhy" hidden>Your recommendation</label>
+        <textarea class="full" id="rcWhy" required aria-label="Your recommendation" placeholder="A song, an album, who you are, why I should listen…"></textarea>
         <input type="checkbox" class="hp" id="rcBot" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="full" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="rcSend">Send to Manu</button><span class="status" id="rcStatus" role="status"></span></div>
+        <div class="full" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="rcSend">Submit</button><span class="status" id="rcStatus" role="status"></span></div>
       </form>
       <div class="share" id="recShare" hidden>
         <p class="lead" style="margin:0">Recommendations work on your public page. Send this link to your dad or brother:</p>
@@ -725,11 +722,10 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
   $("#recForm2").addEventListener("submit",async e=>{e.preventDefault();
     const st=$("#rcStatus");if($("#rcBot").checked)return;
     if(!W3F_KEY){st.textContent="The form isn't connected to Manu's email yet.";return}
-    const name=$("#rcName").value.trim(),who=$("#rcWho").value.trim(),title=$("#rcTitle").value.trim(),artist=$("#rcArtist").value.trim(),why=$("#rcWhy").value.trim();
+    const why=$("#rcWhy").value.trim();if(!why)return;
     $("#rcSend").disabled=true;st.textContent="Sending…";
     try{const r=await fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
-        body:JSON.stringify({access_key:W3F_KEY,subject:`Room2033: ${name} recommends ${title} by ${artist}`,from_name:"Room2033",
-          name,"Who they are":who||"Not given","Song or album":title,Artist:artist,"Why":why||"No note"})});
+        body:JSON.stringify({access_key:W3F_KEY,subject:"Room2033: a new recommendation",from_name:"Room2033",message:why})});
       const j=await r.json();if(!j.success)throw 0;
       e.target.reset();st.textContent="Sent. Manu will see it in her inbox.";toast("Recommendation sent")}
     catch(x){st.textContent="Couldn't send. Check your connection and try again."}
