@@ -115,6 +115,22 @@ button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .wish-sep{font-size:12px;color:var(--ink-subtle);padding:24px 0 4px}
 .progress{height:6px;background:var(--surface-card);border-radius:var(--r-pill);overflow:hidden;margin:4px 0 24px}
 .progress i{display:block;height:100%;background:var(--button);border-radius:inherit}
+/* recommend */
+.rec{background:var(--surface-inverse);color:var(--on-inverse);border-radius:var(--r-xl);padding:28px;margin-bottom:32px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:24px}
+.rec h3{font-size:28px;letter-spacing:-0.04em}
+.rec .lead{margin:8px 0 0;color:var(--inverse-muted);font-size:14px;max-width:40ch}
+.rec .sig2{font-family:var(--script);font-size:24px;letter-spacing:0;margin-top:14px;color:var(--on-inverse)}
+.rec form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.rec label{color:var(--inverse-muted)}
+.rec input,.rec textarea{background:transparent;border:1px solid color-mix(in srgb,var(--on-inverse) 22%,transparent);color:var(--on-inverse)}
+.rec textarea{min-height:84px;resize:vertical;font-family:inherit}
+.rec .full{grid-column:1/-1}
+.rec .btn.primary{background:var(--on-inverse);color:var(--surface-inverse);justify-self:start}
+.rec .status{font-size:13px;color:var(--inverse-muted);align-self:center}
+.rec .share{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.rec .share code{font-size:15px;background:color-mix(in srgb,var(--on-inverse) 10%,transparent);padding:10px 14px;border-radius:var(--r-sm);word-break:break-all;user-select:all}
+.hp{position:absolute;left:-9999px}
+@media (max-width:720px){.rec{grid-template-columns:minmax(0,1fr);padding:22px}.rec form{grid-template-columns:minmax(0,1fr)}}
 /* lessons */
 .school-sub{font-size:24px;letter-spacing:-0.03em;margin:40px 0 16px}
 .school-sub:first-of-type{margin-top:0}
@@ -320,6 +336,27 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
     <div class="panel-head">
       <div><h2>Hall of Fame</h2><p>The best songs ever made, by your ranking. Move songs up and down, cut what doesn't belong, add what's missing.</p></div>
       <button class="btn primary" id="openSong">Add a song</button>
+    </div>
+    <div class="rec" id="recommend">
+      <div>
+        <h3>Recommend me something</h3>
+        <p class="lead">Dad, family, friends: a song I need to hear or a record I should own. It goes straight to my inbox.</p>
+        <div class="sig2">Thank you, Manu</div>
+      </div>
+      <form id="recForm2" hidden>
+        <label for="rcName">Your name<input id="rcName" required autocomplete="name"></label>
+        <label for="rcWho">Who you are to me<input id="rcWho" placeholder="Dad, brother, friend"></label>
+        <label for="rcTitle">Song or album<input id="rcTitle" required></label>
+        <label for="rcArtist">Artist<input id="rcArtist" required></label>
+        <label class="full" for="rcWhy">Why I should listen<textarea id="rcWhy" placeholder="When you first heard it, what to listen for, the best song on it"></textarea></label>
+        <input type="checkbox" class="hp" id="rcBot" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="full" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="rcSend">Send to Manu</button><span class="status" id="rcStatus" role="status"></span></div>
+      </form>
+      <div class="share" id="recShare" hidden>
+        <p class="lead" style="margin:0">Recommendations work on your public page. Send this link to your dad or brother:</p>
+        <code id="recLink">piperintech.github.io/room2033/#hall</code>
+        <button class="btn sm" type="button" id="copyRecLink" style="justify-self:start;align-self:flex-start;background:var(--on-inverse);color:var(--surface-inverse)">Copy link</button>
+      </div>
     </div>
     <form class="sheet" id="songForm" hidden>
       <h3>Add a song</h3>
@@ -633,6 +670,25 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
   $("#wishForm").addEventListener("submit",async e=>{e.preventDefault();const v=$("#wishInput").value.trim();if(!v)return;
     const max=state.wish.reduce((m,w)=>Math.max(m,w.order||0),0);
     if(await write("wishlist/w"+Date.now().toString(36),{name:v,found:null,order:max+1})){$("#wishInput").value="";toast("Added to your wishlist")}});
+
+  // Recommendations: emailed through Web3Forms, only on the public GitHub page
+  const W3F_KEY="";
+  const PUBLIC=/github\.io$/.test(location.hostname);
+  if(PUBLIC){$("#recForm2").hidden=false}else{$("#recShare").hidden=false}
+  $("#copyRecLink").onclick=()=>{const t="https://piperintech.github.io/room2033/#hall";
+    navigator.clipboard?.writeText(t).then(()=>toast("Link copied"),()=>{const r=document.createRange();r.selectNodeContents($("#recLink"));getSelection().removeAllRanges();getSelection().addRange(r)})};
+  $("#recForm2").addEventListener("submit",async e=>{e.preventDefault();
+    const st=$("#rcStatus");if($("#rcBot").checked)return;
+    if(!W3F_KEY){st.textContent="The form isn't connected to Manu's email yet.";return}
+    const name=$("#rcName").value.trim(),who=$("#rcWho").value.trim(),title=$("#rcTitle").value.trim(),artist=$("#rcArtist").value.trim(),why=$("#rcWhy").value.trim();
+    $("#rcSend").disabled=true;st.textContent="Sending…";
+    try{const r=await fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
+        body:JSON.stringify({access_key:W3F_KEY,subject:`Room2033: ${name} recommends ${title} by ${artist}`,from_name:"Room2033",
+          name,"Who they are":who||"Not given","Song or album":title,Artist:artist,"Why":why||"No note"})});
+      const j=await r.json();if(!j.success)throw 0;
+      e.target.reset();st.textContent="Sent. Manu will see it in her inbox.";toast("Recommendation sent")}
+    catch(x){st.textContent="Couldn't send. Check your connection and try again."}
+    $("#rcSend").disabled=false});
 
   document.addEventListener("click",async e=>{
     const b=e.target.closest("button");if(!b)return;
