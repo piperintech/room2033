@@ -44,62 +44,48 @@ button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .num{font-variant-numeric:tabular-nums}
 
-/* hero */
-.hero{display:grid;grid-template-columns:minmax(0,1fr) 340px;grid-template-areas:"copy panel" "stats panel";gap:24px;align-items:stretch;padding-bottom:40px;border-bottom:1px solid var(--hairline)}
-.hero-copy{grid-area:copy}.hero .stats{grid-area:stats}.hero .panel{grid-area:panel}
-.dad{margin:0;display:flex;flex-direction:column;gap:2px}
-.dad p{margin:0;font-family:var(--script);font-size:26px;line-height:1.15;color:var(--ink);letter-spacing:0;max-width:30ch}
-.dad cite{font-style:normal;font-size:12px;color:var(--ink-subtle)}
-.hero-copy{display:flex;flex-direction:column;justify-content:center;gap:16px;min-width:0}
-.hero h1{font-size:clamp(44px,8vw,64px);letter-spacing:-0.05em;line-height:1;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-.hero h1 .sig{font-family:var(--script);font-weight:400;font-size:clamp(64px,13vw,106px);letter-spacing:0;line-height:.9}
-.hero p.lede{max-width:46ch;color:var(--ink-muted);margin:0;font-size:16px}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-self:end}
-.stat{background:var(--surface-card);border-radius:var(--r-lg);padding:14px 16px}
-.stat b{display:block;font-size:24px;font-weight:500;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
-.stat span{font-size:12px;color:var(--ink-muted)}
-
-.panel{background:var(--surface-inverse);color:var(--on-inverse);border-radius:var(--r-xl);box-shadow:var(--shadow-panel);padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center}
-.deck{position:relative;width:100%;max-width:240px;aspect-ratio:1}
-.platter{position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,var(--vinyl) 0 2px,var(--groove) 2px 3px);animation:spin 1.8s linear infinite}
+/* hero: a composed opening screen, everything centered on one axis */
+.hero{min-height:calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:28px;padding-block:24px 32px;border-bottom:1px solid var(--hairline)}
+.hero h1{display:flex;flex-direction:column;align-items:center;gap:6px;letter-spacing:-0.05em;line-height:1}
+.hero h1 .w{font-size:16px;font-weight:500;letter-spacing:0.02em;color:var(--ink-subtle)}
+.hero h1 .sig{font-family:var(--script);font-weight:400;font-size:clamp(76px,16vw,124px);letter-spacing:0;line-height:.9;color:var(--ink)}
+.eyebrow{font-size:12px;color:var(--ink-subtle);letter-spacing:0.04em}
+.turntable{display:flex;flex-direction:column;align-items:center;gap:14px}
+.deck{position:relative;width:min(240px,62vw);aspect-ratio:1}
+.platter{position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,var(--vinyl) 0 2px,var(--groove) 2px 3px);box-shadow:0 0 0 1px var(--hairline),0 18px 40px rgba(0,0,0,.28);animation:spin 1.8s linear infinite}
 .platter::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent 0 20%,rgba(255,255,255,.08) 25%,transparent 32% 70%,rgba(255,255,255,.06) 75%,transparent 82%)}
-.label{position:absolute;inset:33%;border-radius:50%;display:grid;place-items:center;text-align:center;padding:8px;background:var(--label);color:var(--label-ink)}
+.label{position:absolute;inset:33%;border-radius:50%;display:grid;place-items:center;text-align:center;padding:8px;background:var(--label);color:var(--label-ink);animation:spin 1.8s linear infinite}
 .label::after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--vinyl);top:calc(50% - 3.5px);left:calc(50% - 3.5px)}
 .label small{font-size:9px;font-weight:500;display:block;line-height:1.25;max-width:70px;overflow:hidden;margin-top:-22px}
-.tonearm{position:absolute;right:-4px;top:-6px;width:10px;height:58%;background:linear-gradient(var(--inverse-muted),var(--groove));border-radius:6px;transform-origin:50% 6px;transform:rotate(24deg)}
-.nowplaying{font-size:13px;color:var(--inverse-muted);text-align:center}
-.nowplaying b{display:block;color:var(--on-inverse);font-weight:500;font-size:15px}
+.tonearm{position:absolute;right:-6px;top:-8px;width:8px;height:56%;background:linear-gradient(var(--ink-subtle),var(--ink-muted));border-radius:6px;transform-origin:50% 6px;transform:rotate(24deg)}
+.nowplaying{font-size:13px;color:var(--ink-subtle);line-height:1.35}
+.nowplaying b{display:block;color:var(--ink);font-weight:500;font-size:15px}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.platter{animation:none}}
-
-.hero h1 .w{font-size:22px;font-weight:500;letter-spacing:-0.01em;color:var(--ink-muted)}
-@media (max-width:780px){
-  body .hero{grid-template-columns:minmax(0,1fr) 128px;grid-template-areas:"copy panel" "stats stats";gap:14px 14px;padding-bottom:20px}
-  body .panel{padding:14px 10px;gap:8px;border-radius:var(--r-lg);align-self:start}
-  body .deck{max-width:104px}
-  .label small{display:none}
-  .tonearm{width:6px}
-  .nowplaying{font-size:11px;line-height:1.3}
-  .nowplaying b{font-size:12px}
-}
+@media (prefers-reduced-motion:reduce){.platter,.label{animation:none}}
+.dad{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:30ch}
+.dad p{margin:0;font-family:var(--script);font-size:30px;line-height:1.2;color:var(--ink);letter-spacing:0}
+.dad cite{font-style:normal;font-size:12px;color:var(--ink-subtle);letter-spacing:0.04em}
+.hero p.lede{max-width:40ch;color:var(--ink-muted);margin:0;font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:min(560px,100%)}
+.stat{background:var(--surface-card);border-radius:var(--r-md);padding:12px 8px;text-align:center}
+.stat b{display:block;font-size:22px;font-weight:500;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:var(--ink-muted);display:block;line-height:1.25}
+.scrollcue{background:none;border:0;color:var(--ink-subtle);font-size:13px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 8px}
+.scrollcue svg{width:16px;height:16px;animation:nudge 2.4s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateY(4px)}}
+@media (prefers-reduced-motion:reduce){.scrollcue svg{animation:none}}
 @media (max-width:640px){
-  body .wrap{padding-block:12px 56px}
-  .hero-copy{gap:10px}
-  .hero h1 .w{font-size:14px}
-  .hero h1 .sig{font-size:58px;line-height:.95}
+  body .wrap{padding-block:0 56px}
+  .hero{gap:22px}
+  .dad p{font-size:24px}
   .hero p.lede{font-size:14px}
-  .dad p{font-size:20px}
-  body .stats{gap:6px}
-  .stat span{font-size:11px;line-height:1.2;display:block}
-  body .stat{padding:10px;border-radius:var(--r-md)}
-  body .stat b{font-size:19px}
-  body .tabs{flex-wrap:nowrap;overflow-x:auto;margin:16px 0 20px;scrollbar-width:none;margin-inline:-4px;padding-inline:4px}
+  body .tabs{flex-wrap:nowrap;overflow-x:auto;margin:20px 0 20px;scrollbar-width:none;margin-inline:-4px;padding-inline:4px}
   body .tabs::-webkit-scrollbar{display:none}
   body .tab{flex:none}
   body .panel-head{margin-bottom:16px}
+  body .panel-head h2{font-size:32px}
   body .card,body .sheet{padding:20px}
 }
-
 /* wishlist */
 .wish-add{display:flex;gap:8px;margin-bottom:20px}
 .wish-add input{flex:1;min-width:0}
@@ -284,19 +270,9 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
 
 <div class="wrap">
   <header class="hero">
-    <div class="hero-copy">
-      <div class="eyebrow">33⅓ rpm · Dallas · since October 2026</div>
-      <h1><span class="w">welcome to</span> <span class="sig">Room2033</span></h1>
-      <p class="lede">An audiophile daughter's journey. The records I own, the ones I'm hunting, the songs I'd save from a fire, and how to drop the needle without fear.</p>
-      <blockquote class="dad"><p>"Art is how we decorate space. Music is how we decorate time."</p><cite>Dad</cite></blockquote>
-    </div>
-    <div class="stats">
-      <div class="stat"><b id="sOwned">0</b><span>In the crate</span></div>
-      <div class="stat"><b id="sCost">$0</b><span>$ worth</span></div>
-      <div class="stat"><b id="sWant">0</b><span>On the hunt</span></div>
-      <div class="stat"><b id="sSongs">0</b><span>Hall of Fame</span></div>
-    </div>
-    <div class="panel">
+    <div class="eyebrow">33⅓ rpm · Dallas · since October 2026</div>
+    <h1><span class="w">welcome to</span><span class="sig">Room2033</span></h1>
+    <div class="turntable">
       <div class="deck" aria-hidden="true">
         <div class="platter"></div>
         <div class="label"><small id="labelText">SIDE A</small></div>
@@ -304,6 +280,15 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
       </div>
       <div class="nowplaying" id="nowPlaying">Nothing on the platter yet</div>
     </div>
+    <blockquote class="dad"><p>"Art is how we decorate space. Music is how we decorate time."</p><cite>DAD</cite></blockquote>
+    <p class="lede">An audiophile daughter's journey. The records I own, the ones I'm hunting, the songs I'd save from a fire, and how to drop the needle without fear.</p>
+    <div class="stats">
+      <div class="stat"><b id="sOwned">0</b><span>In the crate</span></div>
+      <div class="stat"><b id="sCost">$0</b><span>$ worth</span></div>
+      <div class="stat"><b id="sWant">0</b><span>On the hunt</span></div>
+      <div class="stat"><b id="sSongs">0</b><span>Hall of Fame</span></div>
+    </div>
+    <button class="scrollcue" type="button" id="scrollCue">Open the crate<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </header>
 
   <nav class="tabs" role="tablist">
@@ -318,8 +303,7 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
   <!-- CRATE -->
   <section data-panel="crate">
     <div class="panel-head">
-      <div><h2>The Crate</h2><p>Every record you own. Tap "Spin it" to put it on the platter up top.</p></div>
-      <button class="btn primary" data-open-form="owned">Add a record I own</button>
+      <div><h2>The Crate</h2></div>
     </div>
     <div id="crateGrid"></div>
   </section>
@@ -608,15 +592,15 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
       const h=hue(r.artist+r.title),h2=(h+40)%360;return `<div style="position:absolute;inset:0;background:linear-gradient(150deg,hsl(${h} 32% 46%),hsl(${h2} 30% 20%))"></div>`};
     const pick=owned.find(r=>r.id===state.pick)||owned[0];
     $("#crateGrid").innerHTML=owned.length?`<div class="strip" role="list">${owned.map(r=>`
-      <button class="tile" role="listitem" data-pick="${r.id}" aria-pressed="${r===pick}"><div class="sq">${cover(r)}</div><div class="cap">${esc(r.title)}<span>${esc(r.artist)}</span></div></button>`).join("")}
-      <button class="tile add" data-open-form="owned" aria-label="Add a record I own"><div class="sq">+</div><div class="cap">Add<span>a record</span></div></button></div>
+      <button class="tile" role="listitem" data-pick="${r.id}" aria-label="${esc(r.title)}, ${esc(r.artist)}" aria-pressed="${r===pick}"><div class="sq">${cover(r)}</div></button>`).join("")}
+      <button class="tile add" data-open-form="owned" aria-label="Add a record I own"><div class="sq">+</div></button></div>
       <div class="pick"><div class="cv">${cover(pick)}</div><div style="min-width:0">
         <div class="t">${esc(pick.title)}</div>
         <div class="a">${esc(pick.artist)}${pick.year?" · "+esc(pick.year):""}${pick.store?" · "+esc(pick.store):""}${pick.paid?" · paid $"+Number(pick.paid).toFixed(2):""}</div>
         ${pick.notes?`<div class="note">${esc(pick.notes)}</div>`:""}
         <div class="row-actions"><button class="btn sm primary" data-spin="${pick.id}">Spin it</button><button class="btn sm ghost" data-edit="${pick.id}">Edit</button>${delBtn(pick.id,"rec")}</div>
       </div></div>`
-      :`<div class="empty"><b>Your crate is empty</b>Got a record in your hands? Add it with "Add a record I own", or tap "Got it" on anything in The Hunt.</div>`;
+      :`<div class="empty"><b>Your crate is empty</b>Got a record in your hands? Add it here, or tap "Got it" on anything in The Hunt.<div style="margin-top:14px"><button class="btn primary" data-open-form="owned">Add a record</button></div></div>`;
 
     const groups={};want.forEach(r=>(groups[r.artist]=groups[r.artist]||[]).push(r));
     const order=Object.keys(groups).sort();
@@ -727,6 +711,7 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
     if(b.dataset.dhunt){const d=state.discover.find(x=>x.id===b.dataset.dhunt);if(!d)return;
       const ok=await write("records/d-"+d.id,{artist:d.artist,title:d.title,year:d.year,status:"want",priority:9,edition:"",price:null,currency:"USD",store:"",url:"",notes:"From Discover. "+(d.start?"Start with "+d.start+".":""),added:new Date().toISOString().slice(0,10)});
       if(ok&&await write("discover/"+d.id,{verdict:"hunt"},"update"))toast("Added to The Hunt");return}
+    if(b.id==="scrollCue"){document.querySelector("nav.tabs").scrollIntoView({behavior:"smooth"});return}
     if(b.dataset.pick){state.pick=b.dataset.pick;render();return}
     if(b.dataset.spin){state.spin=b.dataset.spin;render();window.scrollTo({top:0,behavior:"smooth"});return}
     if(b.dataset.ask){state.confirm=b.dataset.ask;render();return}
