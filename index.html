@@ -65,6 +65,10 @@ button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.platter,.label{animation:none}.disc-out{animation:none;transform:translateX(calc(var(--s)*.6))}}
 
+.topbar{display:flex;justify-content:space-between;gap:16px;padding-top:20px;font-size:10px;line-height:1.6;letter-spacing:.16em;font-weight:500;color:var(--ink-subtle)}
+.topbar .r{text-align:right}
+.topbar + .hero{padding-top:56px}
+@media (max-width:640px){.topbar + .hero{padding-top:44px}}
 /* listening session */
 .session{width:min(560px,100%);background:var(--surface-card);border-radius:var(--r-lg);padding:14px 20px;text-align:center}
 .nowplaying{font-size:12px;color:var(--ink-subtle);line-height:1.35;min-width:0}
@@ -291,6 +295,7 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
 
 
 <div class="wrap">
+  <div class="topbar"><div>ROOM 2033<br>MI CASITA PROJECT</div><div class="r">EST 10/26<br>DALLAS, TX</div></div>
   <header class="hero">
     <div class="sleeve-wrap">
       <div class="disc-out" aria-hidden="true"><div class="platter"></div><div class="label"><small id="labelText">Side A</small></div></div>
