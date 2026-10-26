@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>[hidden]{display:none!important}img{max-width:100%}body{margin:0}</style>
 <meta name="description" content="Room2033: an audiophile daughter's journey. Vinyl collection, wishlist, hunt list and hall of fame.">
 <title>Room2033</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -133,7 +134,7 @@ button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .rec .full{grid-column:1/-1}
 .rec .btn.primary{background:var(--on-inverse);color:var(--surface-inverse);justify-self:start}
 .rec .status{font-size:13px;color:var(--inverse-muted);align-self:center}
-.rec .share{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.rec .share{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-top:1px solid color-mix(in srgb,var(--on-inverse) 15%,transparent);padding-top:16px}
 .rec .share code{font-size:15px;background:color-mix(in srgb,var(--on-inverse) 10%,transparent);padding:10px 14px;border-radius:var(--r-sm);word-break:break-all;user-select:all}
 .hp{position:absolute;left:-9999px}
 @media (max-width:720px){.rec{grid-template-columns:minmax(0,1fr);padding:22px}.rec form{grid-template-columns:minmax(0,1fr)}}
@@ -378,14 +379,14 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
         <p class="lead">Dad, family, friends: a song I need to hear or a record I should own. It goes straight to my inbox.</p>
         <div class="sig2">Thank you, Manu</div>
       </div>
-      <form id="recForm2" hidden>
+      <form id="recForm2">
         <label class="full" for="rcWhy" hidden>Your recommendation</label>
         <textarea class="full" id="rcWhy" required aria-label="Your recommendation" placeholder="A song, an album, who you are, why I should listen…"></textarea>
         <input type="checkbox" class="hp" id="rcBot" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="full" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center"><button class="btn primary" id="rcSend">Submit</button><span class="status" id="rcStatus" role="status"></span></div>
       </form>
       <div class="share" id="recShare" hidden>
-        <p class="lead" style="margin:0">Recommendations work on your public page. Send this link to your dad or brother:</p>
+        <p class="lead" style="margin:0;flex-basis:100%">Only you see this note. Send this link so family can recommend:</p>
         <code id="recLink">piperintech.github.io/room2033/#hall</code>
         <button class="btn sm" type="button" id="copyRecLink" style="justify-self:start;align-self:flex-start;background:var(--on-inverse);color:var(--surface-inverse)">Copy link</button>
       </div>
@@ -716,12 +717,13 @@ footer.sign .note{font-family:var(--script);font-size:26px;color:var(--ink-muted
   // Recommendations: emailed through Web3Forms, only on the public GitHub page
   const W3F_KEY="";
   const PUBLIC=/github\.io$/.test(location.hostname);
-  if(PUBLIC){$("#recForm2").hidden=false}else{$("#recShare").hidden=false}
+  if(!PUBLIC)$("#recShare").hidden=false;
   $("#copyRecLink").onclick=()=>{const t="https://piperintech.github.io/room2033/#hall";
     navigator.clipboard?.writeText(t).then(()=>toast("Link copied"),()=>{const r=document.createRange();r.selectNodeContents($("#recLink"));getSelection().removeAllRanges();getSelection().addRange(r)})};
   $("#recForm2").addEventListener("submit",async e=>{e.preventDefault();
     const st=$("#rcStatus");if($("#rcBot").checked)return;
-    if(!W3F_KEY){st.textContent="The form isn't connected to Manu's email yet.";return}
+    if(!PUBLIC){st.textContent="Sending works from the public page. Share the link below.";return}
+    if(!W3F_KEY){st.textContent="Almost ready. Manu is connecting this to her email.";return}
     const why=$("#rcWhy").value.trim();if(!why)return;
     $("#rcSend").disabled=true;st.textContent="Sending…";
     try{const r=await fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
